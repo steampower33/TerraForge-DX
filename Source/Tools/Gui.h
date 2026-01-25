@@ -19,4 +19,6 @@ public:
 
     void Render(Constant& constant, Camera& camera, Renderer& renderer, float totalTime);
 
+private:
+    void SetStyle();
 };

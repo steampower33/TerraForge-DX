@@ -9,22 +9,6 @@
 
 #include "Gui.h"
 
-Gui::~Gui()
-{
-	// Cleanup
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-}
-
-void Gui::Initialize(HWND hWnd, ID3D11Device* device, ID3D11DeviceContext* context)
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui_ImplWin32_Init((void*)hWnd);
-	ImGui_ImplDX11_Init(device, context);
-}
-
 void Gui::Render(Constant& constant, Camera& camera, Renderer& renderer, float totalTime)
 {
 	ImGui_ImplDX11_NewFrame();
@@ -50,7 +34,7 @@ void Gui::Render(Constant& constant, Camera& camera, Renderer& renderer, float t
 			ImGui::Checkbox("Cloud", &renderer.m_Scene.bCloud);
 		}
 
-		if (ImGui::CollapsingHeader("Cloud & Atmosphere Settings"))
+		if (ImGui::CollapsingHeader("Cloud & Atmosphere Settings", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			// Section 1: Performance
 			ImGui::Text("Performance");
@@ -81,10 +65,40 @@ void Gui::Render(Constant& constant, Camera& camera, Renderer& renderer, float t
 			ImGui::ColorEdit3("Fog Color", &constant.m_Constants.iFogColor.x);
 		}
 
-		ImGui::End();
 	}
 
+	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+Gui::~Gui()
+{
+	// Cleanup
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void Gui::Initialize(HWND hWnd, ID3D11Device* device, ID3D11DeviceContext* context)
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+	ImGui_ImplWin32_Init((void*)hWnd);
+	ImGui_ImplDX11_Init(device, context);
+
+	SetStyle();
+}
+
+void Gui::SetStyle()
+{
+	ImGuiStyle& style = ImGui::GetStyle();
+	ImVec4* colors = style.Colors;
+
+	//ImGui::StyleColorsDark();
+	ImGui::StyleColorsLight();
 }
