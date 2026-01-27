@@ -122,6 +122,9 @@
     <ClInclude Include="Source\Core\Camera.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\Helpers.h">
+      <Filter>Source\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\FullScreenVS.hlsl">
@@ -134,6 +137,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\Distance3DPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\NoiseBaker.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

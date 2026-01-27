@@ -92,4 +92,6 @@ void TerraForgeApp::Initialize(HINSTANCE hInstance)
 	m_Gui.Initialize(hWnd, m_Gfx.GetDevice(), m_Gfx.GetContext());
 	m_Constant.Initialize(m_Gfx.GetDevice(), m_Gfx.GetContext());
 	m_Camera.Initialize(m_Width / m_Height);
+
+	m_Renderer.BakeNoise();
 }

@@ -22,7 +22,7 @@ float3 getSky(float3 rd)
 float getDensity(float3 p)
 {
     // Using the cut sphere SDF as currently defined
-    float d = sdCutSphere(p, 5.0f, 0.0f);
+    float d = sdCutSphere(p, 10.0f, -3.0f);
     
     if (d > 2.0f)
         return 0.0f;
@@ -97,8 +97,8 @@ float4 main(VS_OUTPUT input) : SV_Target
     float3 skyColor = getSky(rd);
     
     // Define the bounding box for the cloud
-    float3 bMin = float3(-10.0f, -10.0f, -10.0f);
-    float3 bMax = float3(10.0f, 10.0f, 10.0f);
+    float3 bMin = float3(-20.0f, -20.0f, -20.0f);
+    float3 bMax = float3(20.0f, 20.0f, 20.0f);
     float2 hit = intersectAABB(ro, rd, bMin, bMax);
     
     float3 cloudColor = float3(0.0f, 0.0f, 0.0f);

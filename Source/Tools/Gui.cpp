@@ -56,7 +56,7 @@ void Gui::Render(Constant& constant, Camera& camera, Renderer& renderer, float t
 				constant.m_Constants.SunDir.Normalize();
 			}
 			ImGui::ColorEdit3("Sun Color", &constant.m_Constants.SunColor.x);
-			ImGui::SliderFloat("Absorption", &constant.m_Constants.Absorption, 0.0f, 50.0f);
+			ImGui::SliderFloat("Absorption", &constant.m_Constants.Absorption, 0.0f, 1.0f);
 			ImGui::Separator();
 
 			// Section 4: Atmosphere & Fog
@@ -67,6 +67,17 @@ void Gui::Render(Constant& constant, Camera& camera, Renderer& renderer, float t
 
 	}
 
+	ImGui::End();
+
+	if (ImGui::Begin("Noise Preview"))
+	{
+		ImGui::Image((void*)renderer.m_NoiseSRV.Get(), ImVec2(204, 204));
+
+		if (ImGui::Button("Re-Bake"))
+		{
+			renderer.BakeNoise();
+		}
+	}
 	ImGui::End();
 
 	ImGui::Render();

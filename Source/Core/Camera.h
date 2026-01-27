@@ -19,7 +19,7 @@ public:
     Matrix GetProjectionMatrix() const;
 
     // Camera basis vectors using SimpleMath types
-    Vector3 m_Pos{ 0.0f, 0.0f, -10.0f };
+    Vector3 m_Pos{ 0.0f, 0.0f, -20.0f };
     Vector3 m_LookDir{ 0.0f, 0.0f, 1.0f };
     Vector3 m_UpDir{ 0.0f, 1.0f, 0.0f };
     Vector3 m_RightDir{ 1.0f, 0.0f, 0.0f };

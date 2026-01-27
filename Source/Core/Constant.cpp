@@ -65,7 +65,7 @@ void Constant::InitData()
 	m_Constants.StepSize = 0.1f;
 	m_Constants.CloudScale = 1.2f;
 	m_Constants.CloudThreshold = 0.1f;
-	m_Constants.Absorption = 10.0f;
+	m_Constants.Absorption = 0.5f;
 	m_Constants.FogDensity = 0.01f;
 
 	m_Constants.SunDir = Vector3(0.577f, -0.577f, 0.577f);

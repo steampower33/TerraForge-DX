@@ -19,3 +19,5 @@
 
 template <typename T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+#include "Helpers.h"

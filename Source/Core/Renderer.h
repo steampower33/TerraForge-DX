@@ -28,9 +28,13 @@ private:
 private:
     void CreateShader();
     ComPtr<ID3D11VertexShader> m_FullScreenVS;
+
     ComPtr<ID3D11PixelShader> m_Distance2DPS;
     ComPtr<ID3D11PixelShader> m_Distance3DPS;
     ComPtr<ID3D11PixelShader> m_CloudPS;
+
+    ComPtr<ID3D11ComputeShader> m_NoiseBakerCS;
+
     ComPtr<ID3D11InputLayout> m_InputLayout;
     unsigned int m_Stride;
 
@@ -38,4 +42,13 @@ private:
     ComPtr<ID3D11Buffer> m_VertexBuffer;
 
     HRESULT CompileShader(const std::wstring& filename, const std::string& profile, ID3DBlob** shaderBlob);
+
+    void CreateTexture();
+
+    ComPtr<ID3D11Texture2D> m_NoiseTexture;
+    ComPtr<ID3D11UnorderedAccessView> m_NoiseUAV;
+
+public:
+    ComPtr<ID3D11ShaderResourceView> m_NoiseSRV;
+    void BakeNoise();
 };
