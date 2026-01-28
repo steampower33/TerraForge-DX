@@ -25,9 +25,18 @@ bool TerraForgeApp::Run()
 		}
 		if (bIsExit) break;
 
+		float dt = timer.GetDeltaTime();
+		float totalTime = timer.GetTotalTime();
+
 		// --- Update ---
 		m_Camera.Update(timer.GetDeltaTime());
-		m_Constant.UpdateConstant(m_Camera, timer.GetDeltaTime(), timer.GetTotalTime(), m_Width, m_Height);
+		m_Constant.UpdateGlobal(m_Camera, totalTime, m_Width, m_Height);
+
+		bool bCloudChanged = m_Gui.Update(totalTime, m_Constant, m_Camera, m_Renderer, m_ResMgr);
+		if (bCloudChanged)
+		{
+			m_Constant.UpdateCloud();
+		}
 
 		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
 		{
@@ -37,10 +46,11 @@ bool TerraForgeApp::Run()
 
 		// --- Rendering ---
 		m_Gfx.BeginFrame(m_ClearColor);
+
 		m_Renderer.PrepareShader();
 		m_Constant.BindConstantBuffer();
 		m_Renderer.Render();
-		m_Gui.Render(m_Constant, m_Camera, m_Renderer, timer.GetTotalTime());
+		m_Gui.Render();
 
 		m_Gfx.EndFrame();
 	}

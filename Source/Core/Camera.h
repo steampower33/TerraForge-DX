@@ -37,7 +37,7 @@ private:
     float m_NearZ = 0.1f;
     float m_FarZ = 1000.0f;
 
-    float m_MoveSpeed = 10.0f;
+    float m_MoveSpeed = 40.0f;
     float m_MouseSensitivity = 5.0f;
 
     POINT m_LastMousePos{ 0, 0 };

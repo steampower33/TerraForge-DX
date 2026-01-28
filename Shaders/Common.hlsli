@@ -1,30 +1,25 @@
-cbuffer SceneData : register(b0)
+
+cbuffer cbGlobal : register(b0)
 {
-    // Group 1: Time and Resolution
-    float Time; // Total elapsed time
-    float2 Resolution; // Screen dimensions
-    float StepSize; // Raymarching step delta
+    float3 CameraPos;
+    float Time;
+    float3 CameraDir;
+    float pad0;
+    float3 CameraRight;
+    float pad1;
+    float3 CameraUp;
+    float pad2;
+    float2 Resolution;
+    float2 pad3;
+};
 
-    // Group 2: Camera State (Packed)
-    float3 CameraPos; // World space camera position
-    float CloudScale; // Global noise scale for clouds
+cbuffer cbCloudParams : register(b1)
+{
+    float3 SunDir;
+    float SunIntensity;
 
-    float3 CameraForward; // Normalized view forward vector
-    float CloudThreshold; // Cloud density cutoff (Coverage)
-
-    float3 CameraRight; // Normalized view right vector
-    float Absorption; // Light absorption coefficient
-
-    float3 CameraUp; // Normalized view up vector
-    float FogDensity; // Atmospheric fog intensity
-
-    // Group 3: Lighting and Fog (Packed)
-    float3 SunDir; // Normalized direction to the sun
-    float Padding0; // Explicit padding for 16-byte alignment
-
-    float3 SunColor; // Color and intensity of sunlight
-    float Padding1; // Explicit padding
-
-    float3 FogColor; // Distant atmospheric color
-    float Padding2; // Explicit padding
+    float CloudScale;
+    float ShapeStrength;
+    float DetailStrength;
+    float DensityMult;
 };

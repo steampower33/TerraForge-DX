@@ -48,14 +48,14 @@ private:
 
 	void CreateTexture();
 
-	ComPtr<ID3D11Texture2D> m_NoiseTexture;
-	ComPtr<ID3D11UnorderedAccessView> m_NoiseUAV;
+	ComPtr<ID3D11Texture2D> m_CloudMapTexture;
+	ComPtr<ID3D11UnorderedAccessView> m_CloudMapUAV;
 
 	void CreateSamplerState();
 	ComPtr<ID3D11SamplerState> m_LinearSampler;
 	ComPtr<ID3D11SamplerState> m_PointSampler;
 
 public:
-	ComPtr<ID3D11ShaderResourceView> m_NoiseSRV;
+	ComPtr<ID3D11ShaderResourceView> m_CloudMapSRV;
 	void Bake3DNoise();
 };

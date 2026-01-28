@@ -1,6 +1,4 @@
 
-// --- Intersection Logic ---
-
 // Determines if a ray hits a bounding sphere for optimization
 bool intersectSphere(float3 ro, float3 rd, float rad, out float tMin, out float tMax)
 {

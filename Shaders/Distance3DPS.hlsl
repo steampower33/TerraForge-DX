@@ -32,7 +32,7 @@ float4 main(VS_OUTPUT input) : SV_Target
     p.y = -p.y;
     
     float3 ro = CameraPos;
-    float3 fwd = CameraForward;
+    float3 fwd = CameraDir;
     float3 right = CameraRight;
     float3 up = CameraUp;
     

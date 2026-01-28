@@ -1,67 +1,64 @@
 #pragma once
 
-#include <wrl.h>
-#include <d3d11.h>
-#include <SimpleMath.h>
-
 class Camera;
 
 class Constant
 {
 public:
-    // Nested type aliases to avoid global namespace pollution
-    using Vector2 = DirectX::SimpleMath::Vector2;
-    using Vector3 = DirectX::SimpleMath::Vector3;
+	// Nested type aliases to avoid global namespace pollution
+	using Vector2 = DirectX::SimpleMath::Vector2;
+	using Vector3 = DirectX::SimpleMath::Vector3;
 
 public:
-    struct Constants
-    {
-        float   Time;              // Elapsed time in seconds
-        Vector2 Resolution;        // Viewport resolution (Width, Height)
-        float   StepSize;          // Raymarching step size
+	struct GlobalConstants
+	{
+		Vector3 CameraPos;      // Camera Position in World Space
+		float   Time;           // Elapsed Time (Packed into w channel)
 
-        Vector3 CameraPos;         // World space camera position
-        float   CloudScale;        // Noise frequency for cloud shaping
+		Vector3 CameraDir;      // Camera Look Direction
+		float   Padding0;       // Padding for 16-byte alignment
 
-        Vector3 CameraForward;     // Camera look direction
-        float   CloudThreshold;    // Cloud coverage cutoff
+		Vector3 CameraRight;    // Camera Right Vector
+		float   Padding1;
 
-        Vector3 CameraRight;       // Camera right vector
-        float   Absorption;        // Light absorption coefficient
+		Vector3 CameraUp;       // Camera Up Vector
+		float   Padding2;
 
-        Vector3 CameraUp;          // Camera up vector
-        float   FogDensity;        // Global fog density
+		Vector2 Resolution;     // Viewport Resolution (Width, Height)
+		Vector2 Padding3;       // Padding to fill 16-byte boundary
+	} m_GlobalConstants;
 
-        Vector3 SunDir;            // Direction to the sun
-        float   padding1;           // 16-byte alignment padding
+	struct CloudConstants
+	{
+		Vector3 SunDir;
+		float   SunIntensity;
 
-        Vector3 SunColor;          // RGB color of the sunlight
-        float   padding2;           // 16-byte alignment padding
-
-        Vector3 FogColor;          // RGB color of the atmospheric fog
-        float   padding3;           // 16-byte alignment padding
-    };
+		float   CloudScale;
+		float   ShapeStrength;
+		float   DetailStrength;
+		float   DensityMult;
+	} m_CloudConstants;
 
 public:
-    Constant() = default;
-    ~Constant() = default;
+	Constant() = default;
+	~Constant() = default;
 
-    // [Rule] System classes should NOT be copied.
-    Constant(const Constant&) = delete;
-    Constant& operator=(const Constant&) = delete;
+	// [Rule] System classes should NOT be copied.
+	Constant(const Constant&) = delete;
+	Constant& operator=(const Constant&) = delete;
 
-    void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
-    void UpdateConstant(Camera& camera, float deltaTime, float totalTime, float width, float height);
-    void BindConstantBuffer();
-
-    Constants m_Constants;
-
-private:
-    void CreateConstantBuffer();
-    void InitData();
+	void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
+	void UpdateGlobal(Camera& camera, float totalTime, float width, float height);
+	void UpdateCloud();
+	void BindConstantBuffer();
 
 private:
-    ID3D11Device* m_pDevice = nullptr;
-    ID3D11DeviceContext* m_pContext = nullptr;
-    ComPtr<ID3D11Buffer> m_ConstantBuffer;
+	void CreateConstantBuffer();
+	void InitData();
+
+private:
+	ID3D11Device* m_pDevice = nullptr;
+	ID3D11DeviceContext* m_pContext = nullptr;
+	ComPtr<ID3D11Buffer> m_GlobalConstantBuffer;
+	ComPtr<ID3D11Buffer> m_CloudConstantBuffer;
 };

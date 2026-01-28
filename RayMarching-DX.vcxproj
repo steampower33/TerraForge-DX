@@ -72,16 +72,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\DirectX\TerraForge-DX\Source;F:\DirectX\TerraForge-DX\Source\Core;F:\DirectX\TerraForge-DX\Source\Tools;F:\DirectX\TerraForge-DX\External\ImGui;$(IncludePath)</IncludePath>
+    <IncludePath>Source;Source\Core;Source\Tools;External\ImGui;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>F:\DirectX\TerraForge-DX\Source;F:\DirectX\TerraForge-DX\Source\Core;F:\DirectX\TerraForge-DX\Source\Tools;F:\DirectX\TerraForge-DX\External\ImGui;$(IncludePath)</IncludePath>
+    <IncludePath>Source;Source\Core;Source\Tools;External\ImGui;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>F:\DirectX\TerraForge-DX\Source;F:\DirectX\TerraForge-DX\Source\Core;F:\DirectX\TerraForge-DX\Source\Tools;F:\DirectX\TerraForge-DX\External\ImGui;$(IncludePath)</IncludePath>
+    <IncludePath>Source;Source\Core;Source\Tools;External\ImGui;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>F:\DirectX\TerraForge-DX\Source;F:\DirectX\TerraForge-DX\Source\Core;F:\DirectX\TerraForge-DX\Source\Tools;F:\DirectX\TerraForge-DX\External\ImGui;$(IncludePath)</IncludePath>
+    <IncludePath>Source;Source\Core;Source\Tools;External\ImGui;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -103,7 +103,7 @@
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
-      <AdditionalIncludeDirectories>F:\DirectX\TerraForge-DX\Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +125,7 @@
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
-      <AdditionalIncludeDirectories>F:\DirectX\TerraForge-DX\Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -145,7 +145,7 @@
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
-      <AdditionalIncludeDirectories>F:\DirectX\TerraForge-DX\Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,7 +167,7 @@
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
-      <AdditionalIncludeDirectories>F:\DirectX\TerraForge-DX\Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

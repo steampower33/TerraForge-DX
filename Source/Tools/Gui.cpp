@@ -1,6 +1,7 @@
 #include "Constant.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -9,72 +10,73 @@
 
 #include "Gui.h"
 
-void Gui::Render(Constant& constant, Camera& camera, Renderer& renderer, float totalTime)
+bool Gui::Update(float totalTime, Constant & constant, Camera & camera, Renderer & renderer, ResourceManager& resMgr)
 {
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+    bool bCloudParamsChanged = false;
 
-	if (ImGui::Begin("Settings"))
-	{
-		auto io = ImGui::GetIO();
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
 
-		ImGui::Text("Time: %.2f s", totalTime);
-		ImGui::Text("Average FPS: %.1f", ImGui::GetIO().Framerate);
-		ImGui::Text("Frame Time: %.3f ms/frame", 1000.0f / ImGui::GetIO().Framerate);
-		ImGui::Text("IO DisplaySize: %.1f, %.1f", io.DisplaySize.x, io.DisplaySize.y);
+    // Access the new CloudConstants struct
+    // Assuming 'm_CloudData' is the instance name in your Constant class
+    auto& cloudParams = constant.m_CloudConstants;
 
-		ImGui::Text("Camera: %.1f, %.1f, %.1f", camera.m_Pos.x, camera.m_Pos.y, camera.m_Pos.z);
-		ImGui::Text("Mouse Pos: %.1f, %.1f", io.MousePos.x, io.MousePos.y);
+    if (ImGui::Begin("Settings"))
+    {
+        // --- Scene Control ---
+        if (ImGui::CollapsingHeader("Scene Control"))
+        {
+            ImGui::Checkbox("Distance2D", &renderer.m_Scene.bDistance2D);
+            ImGui::Checkbox("Distance3D", &renderer.m_Scene.bDistance3D);
+            ImGui::Checkbox("Volumetric Cloud", &renderer.m_Scene.bCloud);
+        }
 
-		if (ImGui::CollapsingHeader("Scene"))
-		{
-			ImGui::Checkbox("Distance2D", &renderer.m_Scene.bDistance2D);
-			ImGui::Checkbox("Distance3D", &renderer.m_Scene.bDistance3D);
-			ImGui::Checkbox("Cloud", &renderer.m_Scene.bCloud);
-		}
+        // --- Cloud Physics & Visuals ---
+        if (ImGui::CollapsingHeader("Cloud Parameters", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::TextColored(ImVec4(0, 0, 0, 1), "[ Lighting ]");
 
-		if (ImGui::CollapsingHeader("Cloud & Atmosphere Settings", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			// Section 1: Performance
-			ImGui::Text("Performance");
-			ImGui::SliderFloat("Step Size", &constant.m_Constants.StepSize, 0.01f, 0.5f, "%.3f");
-			ImGui::Separator();
+            if (ImGui::SliderFloat3("Sun Direction", &cloudParams.SunDir.x, -1.0f, 1.0f))
+            {
+                cloudParams.SunDir.Normalize();
+                bCloudParamsChanged = true;
+            }
 
-			// Section 2: Cloud Shape
-			ImGui::Text("Cloud Shape");
-			ImGui::SliderFloat("Cloud Scale", &constant.m_Constants.CloudScale, 0.1f, 5.0f);
-			ImGui::SliderFloat("Coverage (Threshold)", &constant.m_Constants.CloudThreshold, 0.0f, 1.0f);
-			ImGui::Separator();
+            bCloudParamsChanged |= ImGui::SliderFloat("Sun Intensity", &cloudParams.SunIntensity, 0.0f, 500.0f);
 
-			// Section 3: Lighting (Sun)
-			ImGui::Text("Sun Lighting");
-			// Passing &vector.x allows ImGui to access it as a float array
-			if (ImGui::SliderFloat3("Sun Direction", &constant.m_Constants.SunDir.x, -1.0f, 1.0f))
-			{
-				// Direction must be normalized after manual adjustment
-				constant.m_Constants.SunDir.Normalize();
-			}
-			ImGui::ColorEdit3("Sun Color", &constant.m_Constants.SunColor.x);
-			ImGui::SliderFloat("Absorption", &constant.m_Constants.Absorption, 0.0f, 1.0f);
-			ImGui::Separator();
+            ImGui::TextColored(ImVec4(0, 0, 0, 1), "[ Shape & Detail ]");
 
-			// Section 4: Atmosphere & Fog
-			ImGui::Text("Atmosphere");
-			ImGui::SliderFloat("Fog Density", &constant.m_Constants.FogDensity, 0.0f, 0.5f);
-			ImGui::ColorEdit3("Fog Color", &constant.m_Constants.FogColor.x);
-		}
+            bCloudParamsChanged |= ImGui::SliderFloat("Cloud Scale", &cloudParams.CloudScale, 0.1f, 5.0f);
+            bCloudParamsChanged |= ImGui::SliderFloat("ShapeStrength", &cloudParams.ShapeStrength, 0.0f, 1.0f);
+            bCloudParamsChanged |= ImGui::SliderFloat("DetailStrength", &cloudParams.DetailStrength, 0.0f, 1.0f);
+            bCloudParamsChanged |= ImGui::SliderFloat("Density Multiplier", &cloudParams.DensityMult, 0.0f, 5.0f);
+        }
 
-		if (ImGui::CollapsingHeader("Noise", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::Image((void*)renderer.m_NoiseSRV.Get(), ImVec2(204, 204));
-		}
-	}
+        // --- Debug Views ---
+        if (ImGui::CollapsingHeader("Noise Texture", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            // Show the noise texture being used
+            ImGui::Image((void*)renderer.m_CloudMapSRV.Get(), ImVec2(204, 204));
 
-	ImGui::End();
+            auto blueNoise = resMgr.GetTexture("BlueNoise");
+            if (blueNoise != nullptr)
+            {
+                ImGui::SameLine();
+                ImGui::Image(*blueNoise, ImVec2(64, 64));
+            }
+        }
+    }
 
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    ImGui::End();
+
+    return bCloudParamsChanged;
+}
+
+void Gui::Render()
+{
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
 Gui::~Gui()

@@ -3,6 +3,7 @@
 class Constant;
 class Camera;
 class Renderer;
+class ResourceManager;
 
 class Gui
 {
@@ -17,7 +18,9 @@ public:
 
     void Initialize(HWND hWnd, ID3D11Device* device, ID3D11DeviceContext* context);
 
-    void Render(Constant& constant, Camera& camera, Renderer& renderer, float totalTime);
+    bool Update(float totalTime, Constant& constant, Camera& camera, Renderer& renderer, ResourceManager& resMgr);
+
+    void Render();
 
 private:
     void SetStyle();

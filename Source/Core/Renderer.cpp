@@ -82,7 +82,7 @@ void Renderer::PrepareShader()
 	if (m_Scene.bCloud)
 	{
 		m_pContext->PSSetShader(m_CloudPS.Get(), nullptr, 0);
-		m_pContext->PSSetShaderResources(0, 1, m_NoiseSRV.GetAddressOf());
+		m_pContext->PSSetShaderResources(0, 1, m_CloudMapSRV.GetAddressOf());
 		m_pContext->PSSetShaderResources(1, 1, m_pResMgr->GetTexture("BlueNoise"));
 		m_pContext->PSSetSamplers(0, 1, m_LinearSampler.GetAddressOf());
 
@@ -156,7 +156,7 @@ void Renderer::CreateTexture()
 	texDesc.CPUAccessFlags = 0;
 
 	// Create the Texture Resource
-	ThrowIfFailed(m_pDevice->CreateTexture2D(&texDesc, nullptr, &m_NoiseTexture));
+	ThrowIfFailed(m_pDevice->CreateTexture2D(&texDesc, nullptr, &m_CloudMapTexture));
 
 	// Create Unordered Access View (UAV) for Compute Shader writing
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
@@ -164,7 +164,7 @@ void Renderer::CreateTexture()
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	uavDesc.Texture2D.MipSlice = 0;
 
-	ThrowIfFailed(m_pDevice->CreateUnorderedAccessView(m_NoiseTexture.Get(), &uavDesc, &m_NoiseUAV));
+	ThrowIfFailed(m_pDevice->CreateUnorderedAccessView(m_CloudMapTexture.Get(), &uavDesc, &m_CloudMapUAV));
 
 	// Create Shader Resource View (SRV) for ImGui/Pixel Shader reading
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -173,20 +173,20 @@ void Renderer::CreateTexture()
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	ThrowIfFailed(m_pDevice->CreateShaderResourceView(m_NoiseTexture.Get(), &srvDesc, &m_NoiseSRV));
+	ThrowIfFailed(m_pDevice->CreateShaderResourceView(m_CloudMapTexture.Get(), &srvDesc, &m_CloudMapSRV));
 }
 
 void Renderer::Bake3DNoise()
 {
 	// Early exit if essential resources are not initialized
-	if (!m_NoiseBakerCS || !m_NoiseUAV) return;
+	if (!m_NoiseBakerCS || !m_CloudMapUAV) return;
 
 	// 1. Bind the pre-compiled Compute Shader to the pipeline
 	m_pContext->CSSetShader(m_NoiseBakerCS.Get(), nullptr, 0);
 
 	// 2. Link the UAV (output buffer) to the u0 register
 	// pUAVInitialCounts is typically nullptr for standard write operations
-	m_pContext->CSSetUnorderedAccessViews(0, 1, m_NoiseUAV.GetAddressOf(), nullptr);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, m_CloudMapUAV.GetAddressOf(), nullptr);
 
 	// 3. Execute the Compute Shader (Dispatch)
 	// For a 204x204 atlas with [numthreads(8, 8, 1)], 
