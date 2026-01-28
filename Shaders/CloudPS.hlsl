@@ -36,6 +36,12 @@ float getGlow(float dist, float radius, float intensity)
 
 float3 getSky(float3 rd)
 {
+#define SIMPLE_SKY
+
+#ifdef SIMPLE_SKY
+    return 0.7 * float3(0.09, 0.33, 0.81);
+#endif
+    
     float3 zenithColor = float3(0.09f, 0.33f, 0.81f) * 0.7f;
     float3 horizonColor = float3(0.6f, 0.7f, 0.8f);
     
