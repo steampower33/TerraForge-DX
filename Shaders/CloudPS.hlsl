@@ -21,9 +21,11 @@ static const float POWER = 200.0f;
 static const float DENSITY_MULTIPLIER = 0.5f;
 
 // --- Resources ---
-Texture2D NoiseAtlas : register(t0); // Baked Perlin-Worley (Still needed)
-// REMOVED: Texture2D BlueNoiseTex : register(t2); -> We use math instead!
-SamplerState LinearSampler : register(s0);
+Texture2D NoiseAtlas : register(t0); // Baked Perlin-Worley
+Texture2D BlueNoiseTex : register(t1);
+
+SamplerState LinearSampler : register(s0); // For Cloud
+SamplerState PointSampler : register(s1); // For Blue Noise
 
 struct VS_OUTPUT
 {
@@ -197,7 +199,7 @@ float4 main(VS_OUTPUT input) : SV_Target
     float3 skyColor = getSky(rd);
     float3 finalColor = skyColor;
     
-    // 3. AABB Intersection
+    // AABB Intersection
     float3 minCorner = float3(-CLOUD_EXTENT, 0.0f, -CLOUD_EXTENT);
     float3 maxCorner = float3(CLOUD_EXTENT, CLOUD_EXTENT, CLOUD_EXTENT);
     float2 hit = intersectAABB(ro, rd, minCorner, maxCorner);
@@ -206,9 +208,13 @@ float4 main(VS_OUTPUT input) : SV_Target
     {
         float tStart = max(0.0f, hit.x);
         
-        // Procedural Dithering (IGN)
+        // Blue Noise Texture
         float2 pixelPos = input.pos.xy;
-        float dithering = GetIGN(pixelPos + float2(Time * 60.0f, 0.0f));
+        //float dithering = GetIGN(pixelPos + float2(Time * 60.0f, 0.0f));
+        float2 noiseUV = input.pos.xy / 64.0f;
+        float blueNoise = BlueNoiseTex.Sample(PointSampler, noiseUV).r;
+        float goldenRatio = 1.61803398875f;
+        float dithering = frac(blueNoise + (Time * 60.0f) * goldenRatio);
         
         float stepS = (hit.y - hit.x) / float(STEPS_PRIMARY);
         float t = tStart + stepS * dithering;

@@ -183,6 +183,7 @@
     <ClCompile Include="Source\Core\GraphicsCore.cpp" />
     <ClCompile Include="Source\Core\Constant.cpp" />
     <ClCompile Include="Source\Core\Renderer.cpp" />
+    <ClCompile Include="Source\Core\ResourceManager.cpp" />
     <ClCompile Include="Source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -206,6 +207,7 @@
     <ClInclude Include="Source\Core\Constant.h" />
     <ClInclude Include="Source\Core\Helpers.h" />
     <ClInclude Include="Source\Core\Renderer.h" />
+    <ClInclude Include="Source\Core\ResourceManager.h" />
     <ClInclude Include="Source\Core\Vertex.h" />
     <ClInclude Include="Source\pch.h" />
     <ClInclude Include="Source\Tools\GameTimer.h" />

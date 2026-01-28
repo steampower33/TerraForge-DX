@@ -12,7 +12,7 @@ public:
     GraphicsCore& operator=(const GraphicsCore&) = delete;
 
     // Initialize Device, Context, and SwapChain
-    bool Initialize(HWND hwnd, int width, int height);
+    bool Initialize(HWND hwnd, float width, float height);
 
     // --- Per-Frame Operations ---
 

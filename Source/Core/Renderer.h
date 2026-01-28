@@ -1,5 +1,7 @@
 #pragma once
 
+class ResourceManager;
+
 class Renderer
 {
 public:
@@ -11,7 +13,7 @@ public:
 	Renderer(const Renderer&) = delete;
 	Renderer& operator=(const Renderer&) = delete;
 
-	void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
+	void Initialize(ID3D11Device* device, ID3D11DeviceContext* context, ResourceManager* ResMgr);
 	void PrepareShader();
 	void Render();
 
@@ -22,8 +24,9 @@ public:
 	} m_Scene;
 
 private:
-	ID3D11Device* m_Device = nullptr;
-	ID3D11DeviceContext* m_Context = nullptr;
+	ID3D11Device* m_pDevice = nullptr;
+	ID3D11DeviceContext* m_pContext = nullptr;
+	ResourceManager* m_pResMgr = nullptr;
 
 private:
 	void CreateShader();
@@ -50,8 +53,9 @@ private:
 
 	void CreateSamplerState();
 	ComPtr<ID3D11SamplerState> m_LinearSampler;
+	ComPtr<ID3D11SamplerState> m_PointSampler;
 
 public:
 	ComPtr<ID3D11ShaderResourceView> m_NoiseSRV;
-	void BakeNoise();
+	void Bake3DNoise();
 };

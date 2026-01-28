@@ -1,9 +1,9 @@
-
 #include "GraphicsCore.h"
 #include "Renderer.h"
 #include "Gui.h"
 #include "Constant.h"
 #include "Camera.h"
+#include "ResourceManager.h"
 
 class TerraForgeApp {
 public:
@@ -20,6 +20,7 @@ public:
     Gui m_Gui;
     Constant m_Constant;
     Camera m_Camera;
+    ResourceManager m_ResMgr;
 
     void Initialize(HINSTANCE hInstance);
 

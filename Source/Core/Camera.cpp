@@ -5,9 +5,10 @@ Camera::Camera()
     GetCursorPos(&m_LastMousePos);
 }
 
-void Camera::Initialize(float aspectRatio)
+void Camera::Initialize(float aspectRatio, HWND hWnd)
 {
     m_AspectRatio = aspectRatio;
+    m_hWnd = hWnd;
     Update(0.0f);
 }
 
@@ -19,6 +20,9 @@ void Camera::Update(float dt)
 
 void Camera::ProcessKeyboard(float dt)
 {
+    if (m_hWnd != nullptr && GetForegroundWindow() != m_hWnd)
+        return;
+
     float currentSpeed = m_MoveSpeed * dt;
 
     if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
@@ -35,6 +39,12 @@ void Camera::ProcessKeyboard(float dt)
 
 void Camera::ProcessMouse(float dt)
 {
+    if (m_hWnd != nullptr && GetForegroundWindow() != m_hWnd)
+    {
+        GetCursorPos(&m_LastMousePos);
+        return;
+    }
+
     if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
     {
         POINT currentPos;

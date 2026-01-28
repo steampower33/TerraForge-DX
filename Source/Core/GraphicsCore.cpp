@@ -1,6 +1,6 @@
 #include "GraphicsCore.h"
 
-bool GraphicsCore::Initialize(HWND hwnd, int width, int height)
+bool GraphicsCore::Initialize(HWND hwnd, float width, float height)
 {
     // Setup SwapChain description (Configuration boilerplate)
     DXGI_SWAP_CHAIN_DESC scd = {};

@@ -12,7 +12,7 @@ public:
 public:
     Camera();
 
-    void Initialize(float aspectRatio);
+    void Initialize(float aspectRatio, HWND hWnd);
     void Update(float dt);
 
     Matrix GetViewMatrix() const;
@@ -41,4 +41,6 @@ private:
     float m_MouseSensitivity = 5.0f;
 
     POINT m_LastMousePos{ 0, 0 };
+
+    HWND m_hWnd = nullptr;
 };

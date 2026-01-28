@@ -1,4 +1,5 @@
 #include "GameTimer.h"
+#include "ResourceManager.h"
 
 #include "TerraForgeApp.h"
 
@@ -88,10 +89,18 @@ void TerraForgeApp::Initialize(HINSTANCE hInstance)
 	m_Height = (float)(cr.bottom - cr.top);  // Should be EXACTLY 720.0f
 
 	m_Gfx.Initialize(hWnd, m_Width, m_Height);
-	m_Renderer.Initialize(m_Gfx.GetDevice(), m_Gfx.GetContext());
+
 	m_Gui.Initialize(hWnd, m_Gfx.GetDevice(), m_Gfx.GetContext());
 	m_Constant.Initialize(m_Gfx.GetDevice(), m_Gfx.GetContext());
-	m_Camera.Initialize(m_Width / m_Height);
+	m_Camera.Initialize(m_Width / m_Height, hWnd);
 
-	m_Renderer.BakeNoise();
+	{
+		m_ResMgr.Initialize(m_Gfx.GetDevice());
+		m_ResMgr.LoadTexture("BlueNoise", L"Assets/Noise/LDR_LLL1_0.png");
+	}
+
+	{
+		m_Renderer.Initialize(m_Gfx.GetDevice(), m_Gfx.GetContext(), &m_ResMgr);
+		m_Renderer.Bake3DNoise();
+	}
 }

@@ -1,11 +1,13 @@
 #include "Vertex.h"
+#include "ResourceManager.h"
 
 #include "Renderer.h"
 
-void Renderer::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
+void Renderer::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, ResourceManager* pResMgr)
 {
-	m_Device = device;
-	m_Context = context;
+	m_pDevice = device;
+	m_pContext = context;
+	m_pResMgr = pResMgr;
 
 	CreateShader();
 	CreateTexture();
@@ -21,7 +23,7 @@ void Renderer::CreateShader()
 
 	if (SUCCEEDED(CompileShader(L"FullScreenVS.hlsl", "vs_5_0", &vsBlob)))
 	{
-		m_Device->CreateVertexShader(
+		m_pDevice->CreateVertexShader(
 			vsBlob->GetBufferPointer(),
 			vsBlob->GetBufferSize(),
 			nullptr,
@@ -34,34 +36,34 @@ void Renderer::CreateShader()
 		//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		//};
 
-		//m_Device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexshaderCSO->GetBufferPointer(), vertexshaderCSO->GetBufferSize(), &m_InputLayout);
+		//m_pDevice->CreateInputLayout(layout, ARRAYSIZE(layout), vertexshaderCSO->GetBufferPointer(), vertexshaderCSO->GetBufferSize(), &m_InputLayout);
 
 		//m_Stride = sizeof(Vertex);
 	}
 
 	if (SUCCEEDED(CompileShader(L"Distance2DPS.hlsl", "ps_5_0", &psBlob)))
 	{
-		m_Device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &m_Distance2DPS);
+		m_pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &m_Distance2DPS);
 		psBlob->Release();
 		psBlob = nullptr;
 	}
 	if (SUCCEEDED(CompileShader(L"Distance3DPS.hlsl", "ps_5_0", &psBlob)))
 	{
-		m_Device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &m_Distance3DPS);
+		m_pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &m_Distance3DPS);
 		psBlob->Release();
 		psBlob = nullptr;
 	}
 
 	if (SUCCEEDED(CompileShader(L"CloudPS.hlsl", "ps_5_0", &psBlob)))
 	{
-		m_Device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &m_CloudPS);
+		m_pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &m_CloudPS);
 		psBlob->Release();
 		psBlob = nullptr;
 	}
 
 	if (SUCCEEDED(CompileShader(L"NoiseBaker.hlsl", "cs_5_0", &csBlob)))
 	{
-		ThrowIfFailed(m_Device->CreateComputeShader(csBlob->GetBufferPointer(), csBlob->GetBufferSize(), nullptr, &m_NoiseBakerCS));
+		ThrowIfFailed(m_pDevice->CreateComputeShader(csBlob->GetBufferPointer(), csBlob->GetBufferSize(), nullptr, &m_NoiseBakerCS));
 		csBlob->Release();
 		csBlob = nullptr;
 	}
@@ -71,27 +73,31 @@ void Renderer::CreateShader()
 
 void Renderer::PrepareShader()
 {
-	m_Context->VSSetShader(m_FullScreenVS.Get(), nullptr, 0);
+	m_pContext->VSSetShader(m_FullScreenVS.Get(), nullptr, 0);
 
 	if (m_Scene.bDistance2D)
-		m_Context->PSSetShader(m_Distance2DPS.Get(), nullptr, 0);
+		m_pContext->PSSetShader(m_Distance2DPS.Get(), nullptr, 0);
 	if (m_Scene.bDistance3D)
-		m_Context->PSSetShader(m_Distance3DPS.Get(), nullptr, 0);
+		m_pContext->PSSetShader(m_Distance3DPS.Get(), nullptr, 0);
 	if (m_Scene.bCloud)
 	{
-		m_Context->PSSetShader(m_CloudPS.Get(), nullptr, 0);
-		m_Context->PSSetShaderResources(0, 1, m_NoiseSRV.GetAddressOf());
-		m_Context->PSSetSamplers(0, 1, m_LinearSampler.GetAddressOf());
+		m_pContext->PSSetShader(m_CloudPS.Get(), nullptr, 0);
+		m_pContext->PSSetShaderResources(0, 1, m_NoiseSRV.GetAddressOf());
+		m_pContext->PSSetShaderResources(1, 1, m_pResMgr->GetTexture("BlueNoise"));
+		m_pContext->PSSetSamplers(0, 1, m_LinearSampler.GetAddressOf());
+
+		ID3D11SamplerState* samplers[] = { m_LinearSampler.Get(), m_PointSampler.Get() };
+		m_pContext->PSSetSamplers(0, 2, samplers);
 	}
-	//m_Context->IASetInputLayout(m_InputLayout.Get());
+	//m_pContext->IASetInputLayout(m_InputLayout.Get());
 
 }
 
 void Renderer::Render()
 {
 	UINT offset = 0;
-	m_Context->IASetVertexBuffers(0, 1, m_VertexBuffer.GetAddressOf(), &m_Stride, &offset);
-	m_Context->Draw(3, 0);
+	m_pContext->IASetVertexBuffers(0, 1, m_VertexBuffer.GetAddressOf(), &m_Stride, &offset);
+	m_pContext->Draw(3, 0);
 }
 
 void Renderer::CreateQuadVertexBuffer()
@@ -103,7 +109,7 @@ void Renderer::CreateQuadVertexBuffer()
 
 	D3D11_SUBRESOURCE_DATA vertexbufferSRD = { quad_vertices };
 
-	m_Device->CreateBuffer(&vertexbufferdesc, &vertexbufferSRD, &m_VertexBuffer);
+	m_pDevice->CreateBuffer(&vertexbufferdesc, &vertexbufferSRD, &m_VertexBuffer);
 }
 
 HRESULT Renderer::CompileShader(const std::wstring& filename, const std::string& profile, ID3DBlob** shaderBlob)
@@ -150,7 +156,7 @@ void Renderer::CreateTexture()
 	texDesc.CPUAccessFlags = 0;
 
 	// Create the Texture Resource
-	ThrowIfFailed(m_Device->CreateTexture2D(&texDesc, nullptr, &m_NoiseTexture));
+	ThrowIfFailed(m_pDevice->CreateTexture2D(&texDesc, nullptr, &m_NoiseTexture));
 
 	// Create Unordered Access View (UAV) for Compute Shader writing
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
@@ -158,7 +164,7 @@ void Renderer::CreateTexture()
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	uavDesc.Texture2D.MipSlice = 0;
 
-	ThrowIfFailed(m_Device->CreateUnorderedAccessView(m_NoiseTexture.Get(), &uavDesc, &m_NoiseUAV));
+	ThrowIfFailed(m_pDevice->CreateUnorderedAccessView(m_NoiseTexture.Get(), &uavDesc, &m_NoiseUAV));
 
 	// Create Shader Resource View (SRV) for ImGui/Pixel Shader reading
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -167,34 +173,34 @@ void Renderer::CreateTexture()
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	ThrowIfFailed(m_Device->CreateShaderResourceView(m_NoiseTexture.Get(), &srvDesc, &m_NoiseSRV));
+	ThrowIfFailed(m_pDevice->CreateShaderResourceView(m_NoiseTexture.Get(), &srvDesc, &m_NoiseSRV));
 }
 
-void Renderer::BakeNoise()
+void Renderer::Bake3DNoise()
 {
 	// Early exit if essential resources are not initialized
 	if (!m_NoiseBakerCS || !m_NoiseUAV) return;
 
 	// 1. Bind the pre-compiled Compute Shader to the pipeline
-	m_Context->CSSetShader(m_NoiseBakerCS.Get(), nullptr, 0);
+	m_pContext->CSSetShader(m_NoiseBakerCS.Get(), nullptr, 0);
 
 	// 2. Link the UAV (output buffer) to the u0 register
 	// pUAVInitialCounts is typically nullptr for standard write operations
-	m_Context->CSSetUnorderedAccessViews(0, 1, m_NoiseUAV.GetAddressOf(), nullptr);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, m_NoiseUAV.GetAddressOf(), nullptr);
 
 	// 3. Execute the Compute Shader (Dispatch)
 	// For a 204x204 atlas with [numthreads(8, 8, 1)], 
 	// we calculate: ceil(204 / 8) = 26 thread groups per axis
 	UINT groupCount = (UINT)ceil(204.0f / 8.0f);
-	m_Context->Dispatch(groupCount, groupCount, 1);
+	m_pContext->Dispatch(groupCount, groupCount, 1);
 
 	// 4. CRITICAL: Unbind the UAV after execution
 	// This prevents "Resource Hazard" errors when the texture is later read as an SRV
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
-	m_Context->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+	m_pContext->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
 
 	// Optional: Unbind the Compute Shader to maintain a clean pipeline state
-	m_Context->CSSetShader(nullptr, nullptr, 0);
+	m_pContext->CSSetShader(nullptr, nullptr, 0);
 }
 
 void Renderer::CreateSamplerState()
@@ -209,8 +215,11 @@ void Renderer::CreateSamplerState()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	// Create the sampler state
-	HRESULT hr = m_Device->CreateSamplerState(&sampDesc, &m_LinearSampler);
+	HRESULT hr = m_pDevice->CreateSamplerState(&sampDesc, &m_LinearSampler);
 	if (FAILED(hr)) {
 		// Handle error
 	}
+
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	m_pDevice->CreateSamplerState(&sampDesc, &m_PointSampler);
 }
