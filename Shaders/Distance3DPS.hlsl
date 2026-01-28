@@ -1,3 +1,10 @@
+/*
+ * 3D Signed Distance Field Functions
+ * * Original Math by Inigo Quilez
+ * Reference: https://iquilezles.org/articles/distfunctions/
+ * * Ported from GLSL to HLSL by [SeungMin Lee]
+ */
+
 #include "Common.hlsli"
 
 struct VS_OUTPUT
