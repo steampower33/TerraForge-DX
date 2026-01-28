@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36717.8 d17.14
+VisualStudioVersion = 17.14.36717.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TerraForge-DX", "TerraForge-DX.vcxproj", "{20EEE9ED-8B5E-4197-8479-F377D0E1EE1A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RayMarching-DX", "RayMarching-DX.vcxproj", "{20EEE9ED-8B5E-4197-8479-F377D0E1EE1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

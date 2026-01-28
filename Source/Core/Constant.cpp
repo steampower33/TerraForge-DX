@@ -23,17 +23,17 @@ void Constant::UpdateConstant(Camera& camera, float deltaTime, float totalTime, 
 
 	// Map to GPU
 	D3D11_MAPPED_SUBRESOURCE msr;
-	if (SUCCEEDED(m_Context->Map(m_ConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
+	if (SUCCEEDED(m_pContext->Map(m_ConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr)))
 	{
 		memcpy(msr.pData, &m_Constants, sizeof(Constants));
-		m_Context->Unmap(m_ConstantBuffer.Get(), 0);
+		m_pContext->Unmap(m_ConstantBuffer.Get(), 0);
 	}
 }
 
 void Constant::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
 {
-	m_Device = device;
-	m_Context = context;
+	m_pDevice = device;
+	m_pContext = context;
 
 	InitData();
 	CreateConstantBuffer();
@@ -48,7 +48,7 @@ void Constant::CreateConstantBuffer()
 	constantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	HRESULT hr = m_Device->CreateBuffer(&constantbufferdesc, nullptr, &m_ConstantBuffer);
+	HRESULT hr = m_pDevice->CreateBuffer(&constantbufferdesc, nullptr, &m_ConstantBuffer);
 	if (FAILED(hr))
 	{
 		OutputDebugStringA("[Error] Constant Buffer is NULL!\n");
@@ -57,7 +57,7 @@ void Constant::CreateConstantBuffer()
 
 void Constant::BindConstantBuffer()
 {
-	m_Context->PSSetConstantBuffers(0, 1, m_ConstantBuffer.GetAddressOf());
+	m_pContext->PSSetConstantBuffers(0, 1, m_ConstantBuffer.GetAddressOf());
 }
 void Constant::InitData()
 {

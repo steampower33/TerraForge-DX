@@ -61,7 +61,7 @@ private:
     void InitData();
 
 private:
-    ID3D11Device* m_Device = nullptr;
-    ID3D11DeviceContext* m_Context = nullptr;
-    ComPtr<ID3D11Buffer>    m_ConstantBuffer;
+    ID3D11Device* m_pDevice = nullptr;
+    ID3D11DeviceContext* m_pContext = nullptr;
+    ComPtr<ID3D11Buffer> m_ConstantBuffer;
 };

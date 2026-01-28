@@ -40,7 +40,6 @@ private:
     void CreateRasterizerState();
 
 private:
-    // --- Core D3D11 Objects (The Holy Trinity) ---
     ComPtr<ID3D11Device>        m_Device;
     ComPtr<ID3D11DeviceContext> m_Context;
     ComPtr<IDXGISwapChain>      m_SwapChain;

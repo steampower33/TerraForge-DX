@@ -17,7 +17,7 @@ public:
     ID3D11ShaderResourceView** GetTexture(const std::string& name);
 
 private:
-    ID3D11Device* m_Device = nullptr;
+    ID3D11Device* m_pDevice = nullptr;
     std::unordered_map<std::string, ComPtr<ID3D11ShaderResourceView>> m_TextureMap;
 };
 

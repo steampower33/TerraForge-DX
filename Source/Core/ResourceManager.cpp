@@ -2,7 +2,7 @@
 
 void ResourceManager::Initialize(ID3D11Device* device)
 {
-    m_Device = device;
+    m_pDevice = device;
 }
 
 bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& path)
@@ -13,7 +13,7 @@ bool ResourceManager::LoadTexture(const std::string& name, const std::wstring& p
     }
 
     ComPtr<ID3D11ShaderResourceView> srv;
-    HRESULT hr = DirectX::CreateWICTextureFromFile(m_Device, nullptr, path.c_str(), nullptr, srv.GetAddressOf());
+    HRESULT hr = DirectX::CreateWICTextureFromFile(m_pDevice, nullptr, path.c_str(), nullptr, srv.GetAddressOf());
 
     if (FAILED(hr))
     {

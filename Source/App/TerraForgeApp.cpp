@@ -66,8 +66,8 @@ LRESULT CALLBACK TerraForgeApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
 
 void TerraForgeApp::Initialize(HINSTANCE hInstance)
 {
-	WCHAR WindowClass[] = L"TerraForge-DX";
-	WCHAR Title[] = L"TerraForge-DX (DX11)";
+	WCHAR WindowClass[] = L"RayMarching-DX";
+	WCHAR Title[] = L"RayMarching-DX (DX11)";
 
 	WNDCLASSW wndclass = { 0, WndProc, 0, 0, 0, 0, 0, 0, 0, WindowClass };
 	RegisterClassW(&wndclass);
@@ -76,7 +76,7 @@ void TerraForgeApp::Initialize(HINSTANCE hInstance)
 	RECT wr = { 0, 0, (LONG)m_Width, (LONG)m_Height };
 	AdjustWindowRect(&wr, dwStyle, FALSE); // Border + Title Bar calculation
 
-	HWND hWnd = CreateWindowExW(0, L"TerraForge-DX", L"TerraForge-DX",
+	HWND hWnd = CreateWindowExW(0, L"RayMarching-DX", L"RayMarching-DX",
 		dwStyle | WS_VISIBLE,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		wr.right - wr.left,   // This will be larger than 1280 (e.g., 1296)
