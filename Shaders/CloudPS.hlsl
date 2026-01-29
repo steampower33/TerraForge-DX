@@ -9,6 +9,7 @@ static const float3 CloudExtent = float3(100.0, 40.0, 100.0);
 static const float3 SigmaS = float3(1.0, 1.0, 1.0);
 static const float3 SigmaA = float3(0.0, 0.0, 0.0);
 static const float3 PhaseParams = float3(-0.1, 0.3, 0.7); // g1, g2, weight
+static const float GoldenRatio = 1.61803398875;
 
 static const float3 SigmaE = max(SigmaS + SigmaA, float3(1e-6, 1e-6, 1e-6));
 
@@ -193,8 +194,7 @@ float4 main(VS_OUTPUT input) : SV_Target
         
         float2 noiseUV = input.pos.xy / 64.0;
         float blueNoise = BlueNoiseTex.Sample(PointSampler, noiseUV).r;
-        float goldenRatio = 1.61803398875;
-        float dithering = frac(blueNoise + (Time * 60.0) * goldenRatio);
+        float dithering = frac(blueNoise + (Time * 60.0) * GoldenRatio);
         
         float stepS = (hit.y - hit.x) / float(STEPS_PRIMARY);
         float t = tStart + stepS * dithering;
