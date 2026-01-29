@@ -3,7 +3,7 @@
 This project analyzes high-quality volumetric cloud rendering techniques from ShaderToy and **ports and optimizes them for the DirectX 11 (C++) environment**.
 Through the process of converting GLSL to HLSL, I gained a deep understanding of Raymarching principles and the volumetric rendering pipeline.
 
-<img src="assets/demo/demo_cloud.png" width="100%" />
+<img src="Assets/Demo/DemoCloud.png" width="100%" />
 
 ## 🎯 Project Goal
 
